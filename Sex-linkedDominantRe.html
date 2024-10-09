@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sex-linked Dominant Result</title>
+    <link href="output.css" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inria+Sans:wght@400;700&display=swap"
+        rel="stylesheet"
+    />
+</head>
+<body class="bg-neutral-200">
+<section class="nev_home" style="background-color: #5CC4E1;">
+    <nav class="flex p-4 items-center">
+        <img class="w-10 h-10 mx-5" src="Logo.png" alt="Error" />
+        <h1 class="text-white text-2xl font-extrabold font-inria">
+            Sex-linked Dominant Result
+        </h1>
+        <a href="Home.html" class="inline-block ml-auto">
+            <img class="w-10 h-10 ml-auto" src="home.png" alt="Home Logo" />
+        </a>
+    </nav>
+</section>
+
+<div class="flex justify-center p-10 w-full">
+    <div class="bg-white w-full max-w-4xl rounded-lg shadow-lg p-6">
+        <div class="flex justify-between items-center mb-4">
+            <div class="flex flex-col items-center">
+                <label for="dad-traits" class="text-lg font-semibold">DAD</label>
+                <select id="dad-traits" class="bg-gray-200 p-2 rounded-lg mt-2">
+                    <option value="" disabled selected>Select Traits</option>
+                    <option value="1">XᴬY (Diseased)</option>
+                    <option value="2">XᵃY (Healthy)</option>
+                </select>
+            </div>
+
+            <div style="border-left: 1px solid #e5e5e5; height: 80px; margin: 0 10px;"></div>
+
+            <div class="flex flex-col items-center">
+                <label for="mom-traits" class="text-lg font-semibold">MOM</label>
+                <select id="mom-traits" class="bg-gray-200 p-2 rounded-lg mt-2">
+                    <option value="" disabled selected>Select Traits</option>
+                    <option value="1">XᴬXᴬ (Diseased)</option>
+                    <option value="2">XᴬXᵃ (Diseased)</option>
+                    <option value="3">XᵃXᵃ (Healthy)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="bg-gray-300 text-center p-4 h-96 rounded-lg">
+            <h2 class="text-xl font-bold">THE ANALYSIS RESULT</h2>
+            <div id="result" class="text-lg mt-4"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function comb(n, k) {
+        if (k > n) return 0;
+        if (k === 0 || k === n) return 1;
+        let num = 1;
+        let denom = 1;
+        for (let i = 0; i < k; i++) {
+            num *= (n - i);
+            denom *= (i + 1);
+        }
+        return num / denom;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const resultDiv = document.getElementById("result");
+        const dadTraitsSelect = document.getElementById("dad-traits");
+        const momTraitsSelect = document.getElementById("mom-traits");
+
+        function calculateResult() {
+            const dad = parseInt(dadTraitsSelect.value);
+            const mom = parseInt(momTraitsSelect.value);
+
+            if ([1, 2].includes(dad) && [1, 2, 3].includes(mom)) {
+                let prob_disease = 0;
+
+                if (dad === 1 && mom === 1) { // XᴬY & XᴬXᴬ
+                    prob_disease = 0.5;
+                } else if (dad === 1 && mom === 2) { // XᴬY & XᴬXᵃ
+                    prob_disease = 0.5;
+                } else if (dad === 2 && mom === 1) { // XᵃY & XᴬXᴬ
+                    prob_disease = 0.0;
+                } else if (dad === 2 && mom === 2) { // XᵃY & XᴬXᵃ
+                    prob_disease = 0.25;
+                } else if (dad === 1 && mom === 3) { // XᴬY & XᵃXᵃ
+                    prob_disease = 0.0;
+                } else if (dad === 2 && mom === 3) { // XᵃY & XᵃXᵃ
+                    prob_disease = 0.0;
+                }
+
+                resultDiv.innerHTML = `Probability of child being diseased: ${(prob_disease * 100).toFixed(2)}%`;
+            } else {
+                resultDiv.innerHTML = "Invalid selection. Please choose traits for both parents.";
+            }
+        }
+
+        dadTraitsSelect.addEventListener("change", calculateResult);
+        momTraitsSelect.addEventListener("change", calculateResult);
+    });
+</script>
+</body>
+</html>
